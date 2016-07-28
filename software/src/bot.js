@@ -109,6 +109,7 @@ go = function(x, y, z) {
   servo2.to((angles[2]).map( 0 , 90 , 8 , 90 ));
   servo3.to((angles[3]).map( 0 , 90 , 8 , 90 ));
   console.log(angles);
+  return angles;
 }
 
 position = function() {
@@ -127,3 +128,20 @@ tracer = function() {
 	}
 }
 
+reset = function() {
+	go(0,0,-144);
+}
+
+var zerorpc = require("zerorpc");
+
+var server = new zerorpc.Server({
+    go: function (x,y,z, reply) {
+        angles = go(x,y,z);
+        reply(null, angles);
+    },
+    hello: function(name, reply) {
+        reply(null, "Hello, " + name, false);
+    }
+});
+
+server.bind("tcp://0.0.0.0:4242");
