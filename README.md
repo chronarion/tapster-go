@@ -21,5 +21,8 @@ sudo apt-get install libjpeg8-dev libtiff4-dev libjasper-dev libpng12-dev
 sudo apt-get install libatlas-base-dev gfortran
 pip install numpy
 
+#http://milq.github.io/install-opencv-ubuntu-debian/
 wget https://raw.githubusercontent.com/milq/scripts-ubuntu-debian/master/install-opencv.sh
 bash install-opencv.sh
+
+
