@@ -1,20 +1,10 @@
-## Tapster - Mobile Automation Robot
+# Install deps
+sudo apt-get update
+sudo apt-get install libzmq3-dev
 
-<span>
-    ![Tapsterbot](http://hugs.github.io/img/tapster-2-desk.jpg)
-</span>
+# Install not old nodejs
+# Using Debian, as root
+curl -sL https://deb.nodesource.com/setup_6.x | bash -
+apt-get install -y nodejs
 
-##Dependencies
-- Node.js
-- One Tapster robot
-
-##Getting Started
-
-1. Download and install the Arduino Client: [http://arduino.cc/en/Guide/HomePage](http://arduino.cc/en/Guide/HomePage)
-2. Follow the setup procedure, and use the "blink" test script to verify your Arduino is working.
-3. From the Arduino IDE upload the "Firmata" script: File -> Open -> Examples > Firmata > StandardFirmata
-4. Install the dependencies: `cd software; npm install`
-5. Start'er up: `node src/bot.js`
-6. Start dancing: `dance()`
-7. Stop dancing: `chill()`
-8. Start moving: `go(0,0,-140)`
+# npm install
