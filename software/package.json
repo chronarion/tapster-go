@@ -17,6 +17,8 @@
       "node":"*"
    },
    "dependencies":{
-      "johnny-five":"*"
+      "johnny-five":"*",
+      "zerorpc":"*"
    }
 }
+

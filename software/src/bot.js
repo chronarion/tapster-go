@@ -1,18 +1,23 @@
 five = require("johnny-five");
 ik = require("./ik");
+
 board = new five.Board({
   debug: false
 });
 
 board.on("ready", function() {
     // Setup
+	// 1,2,3 ;
+	// 2,1,3
     servo1 = five.Servo({
         pin: 9,
-        range: [0,90]
+        range: [0,90],
+		offset:8
     });
     servo2 = five.Servo({
         pin: 10,
         range: [0,90]
+		
     });
     servo3 = five.Servo({
         pin: 11,
@@ -45,7 +50,7 @@ board.on("ready", function() {
     var dancer;
 
     start_dance = function() {
-      if (!dancer) dancer = setInterval(dance, 250);
+      if (!dancer) dancer = setInterval(dance, 150);
     }
 
     stop_dance = function() {
@@ -108,5 +113,17 @@ go = function(x, y, z) {
 
 position = function() {
   return ik.forward(servo1.last.degrees, servo2.last.degrees, servo3.last.degrees);
+}
+
+tracer = function() {
+	var i = 0;
+	var x = -40;
+	var y = -40;
+	var z = -160;
+
+	for(i=0; i<20;i++){		
+		go(x+i,y,z);
+		console.log(x+i);
+	}
 }
 
