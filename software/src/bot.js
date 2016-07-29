@@ -1,73 +1,57 @@
 five = require("johnny-five");
 ik = require("./ik");
 
-board = new five.Board({
-  debug: false
-});
+var servo1;
+var servo2;
+var servo3;
+var board;
 
-board.on("ready", function() {
-    // Setup
-	// 1,2,3 ;
-	// 2,1,3
-    servo1 = five.Servo({
-        pin: 9,
-        range: [0,90],
-	offset: 8
-    });
-    servo2 = five.Servo({
-        pin: 10,
-        range: [0,90]
-		
-    });
-    servo3 = five.Servo({
-        pin: 11,
-        range: [0, 90]
-    });
+function spawn() {
+  board = new five.Board({
+    debug: true,
+    port: "/dev/ttyACM0"
+  });
 
-    board.repl.inject({
-      servo1: servo1,
-      s1: servo1,
-      servo2: servo2,
-      s2: servo2,
-      servo3: servo3,
-      s3: servo3,
-    });
+  board.on("ready", function() {
+      // Setup
+      this.on("exit", function() {
+        console.log("board exit")
+      });
 
-    // Move to starting point
-    var max = 15;
-    var min = 5;
-    var range = max - min;
-    servo1.to(min);
-    servo2.to(min);
-    servo3.to(min);
+      servo1 = five.Servo({
+          pin: 9,
+          range: [0,90],
+          offset: 8
+      });
+      servo2 = five.Servo({
+          pin: 10,
+          range: [0,90]
+ 		
+      });
+      servo3 = five.Servo({
+          pin: 11,
+          range: [0, 90]
+      });
 
-    var dance = function() {
-      servo1.to(parseInt((Math.random() * range) + min, 10));
-      servo2.to(parseInt((Math.random() * range) + min, 10));
-      servo3.to(parseInt((Math.random() * range) + min, 10));
-    };
+      board.repl.inject({
+        servo1: servo1,
+        s1: servo1,
+        servo2: servo2,
+        s2: servo2,
+        servo3: servo3,
+        s3: servo3,
+      });
 
-    var dancer;
-
-    start_dance = function() {
-      if (!dancer) dancer = setInterval(dance, 150);
-    }
-
-    stop_dance = function() {
-      if (dancer) {
-        clearInterval(dancer);
-        dancer = null;
-      }
-    }
-
-    board.repl.inject({
-      dance: start_dance,
-      chill: stop_dance
-    });
-
-
-});
-
+      // Move to starting point
+      var max = 15;
+      var min = 5;
+      var range = max - min;
+      servo1.to(min);
+      servo2.to(min);
+      servo3.to(min);
+  });
+  return board;
+}
 
 Number.prototype.map = function ( in_min , in_max , out_min , out_max ) {
   return ( this - in_min ) * ( out_max - out_min ) / ( in_max - in_min ) + out_min;
@@ -132,11 +116,21 @@ reset = function() {
 	go(0,0,-144);
 }
 
+board = spawn()
+
 var zerorpc = require("zerorpc");
 
 var server = new zerorpc.Server({
     go: function (x,y,z, reply) {
-        angles = go(x,y,z);
+        try {
+          angles = go(x,y,z);
+	}
+	catch(err) {
+          console.log("whoa")
+          board = null;
+          board = spawn();
+          angles = go(x,y,z);
+	}
         reply(null, angles, false);
     },
     hello: function(name, reply) {
