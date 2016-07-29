@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+dump = True
+
 # get orginal image
 orig = cv2.imread('test.png')
 assert (orig is not None)
@@ -12,7 +14,8 @@ assert (orig is not None)
 blur = cv2.GaussianBlur(orig, (5,5), 0)
 #blur = cv2.medianBlur(orig, 3)
 
-cv2.imwrite('blur.png', blur)
+if dump:
+  cv2.imwrite('blur.png', blur)
 
 # normalise RGB
 b,g,r = cv2.split(blur)
@@ -27,12 +30,14 @@ cv2.divide(b,total,b,255.0)
 
 norm = cv2.merge((b,g,r))
 
-cv2.imwrite('norm.png', norm)
+if dump:
+  cv2.imwrite('norm.png', norm)
 
 # posterize simply with mean shift filtering
 post = cv2.pyrMeanShiftFiltering(norm,20,30)
 
-cv2.imwrite('post.png', post)
+if dump:
+  cv2.imwrite('post.png', post)
 
 #pokemon go colors: light blue is 191H, 65S, 100B
 # dark blue is 198, 100, 100
@@ -44,16 +49,23 @@ cv2.imwrite('post.png', post)
 hsv = cv2.cvtColor(post, cv2.COLOR_BGR2HSV)
 lower_blue = np.array([175/2,50,50])
 upper_blue = np.array([212/2,255,255])
-masked = cv2.inRange(hsv, lower_blue, upper_blue)
-cv2.imwrite("mask.png", masked)
+mask = cv2.inRange(hsv, lower_blue, upper_blue)
+if dump:
+  cv2.imwrite("mask.png", mask)
 
-bwimg = cv2.cvtColor(post,cv2.COLOR_BGR2GRAY)
-cv2.imwrite('bw.png', bwimg)
+masked = cv2.bitwise_and(post, post, mask=mask)
+
+bwimg = cv2.cvtColor(masked,cv2.COLOR_BGR2GRAY)
+if dump:
+  cv2.imwrite('bw.png', bwimg)
 
 #circles = cv2.HoughCircles(bwimg,cv2.HOUGH_GRADIENT,1.5,minDist=100,
 #                            param1=50,param2=30,minRadius=5,maxRadius=0)
 
-circles = cv2.HoughCircles(bwimg,cv2.HOUGH_GRADIENT,1.5,minDist=100, maxRadius=2000, param1=10, param2=100)
+#circles = cv2.HoughCircles(masked,cv2.HOUGH_GRADIENT,1.5,minDist=100, maxRadius=2000, param1=10, param2=100)
+height, width = bwimg.shape[:2]
+# param1 somewhere from 60 and beyond to 110?
+circles = cv2.HoughCircles(bwimg,cv2.HOUGH_GRADIENT,1.5,minDist=height/5, param1=110, param2=50, maxRadius=200)
                             
 
 circles = np.uint16(np.around(circles))
