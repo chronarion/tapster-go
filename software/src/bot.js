@@ -12,7 +12,7 @@ board.on("ready", function() {
     servo1 = five.Servo({
         pin: 9,
         range: [0,90],
-		offset:8
+	offset: 8
     });
     servo2 = five.Servo({
         pin: 10,
@@ -137,7 +137,7 @@ var zerorpc = require("zerorpc");
 var server = new zerorpc.Server({
     go: function (x,y,z, reply) {
         angles = go(x,y,z);
-        reply(null, angles);
+        reply(null, angles, false);
     },
     hello: function(name, reply) {
         reply(null, "Hello, " + name, false);
