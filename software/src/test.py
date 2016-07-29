@@ -65,7 +65,14 @@ if dump:
 #circles = cv2.HoughCircles(masked,cv2.HOUGH_GRADIENT,1.5,minDist=100, maxRadius=2000, param1=10, param2=100)
 height, width = bwimg.shape[:2]
 # param1 somewhere from 60 and beyond to 110?
-circles = cv2.HoughCircles(bwimg,cv2.HOUGH_GRADIENT,1.5,minDist=height/5, param1=110, param2=50, maxRadius=200)
+
+#stupid crap because of old opencv
+try:
+  gradient = cv2.HOUGH_GRADIENT
+except AttributeError:
+  gradient = cv2.cv.CV_HOUGH_GRADIENT
+
+circles = cv2.HoughCircles(bwimg,gradient,1.5,minDist=height/5, param1=110, param2=50, maxRadius=200)
                             
 
 circles = np.uint16(np.around(circles))
